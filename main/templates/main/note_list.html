@@ -1,0 +1,27 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Notes List{% endblock %}
+
+{% block body %}
+<div class="col-sm-12">
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Category</th>
+                <th scope="col">Date Created</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for note in note_list %}
+            <tr>
+                <td>{{note.title}}</td>
+                <td>{{note.category}}</td>
+                <td>{{note.datetime_created}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

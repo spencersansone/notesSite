@@ -28,4 +28,8 @@ def add_note(request):
     x['note_categories'] = NoteCategory.objects.all().order_by('title') 
     return render(request, 'main/add_note.html', x)
 
+def note_list(request):
+    x = {}
+    x['note_list'] = Note.objects.all()
+    return render(request, 'main/note_list.html', x)
 # Create your views here.

@@ -6,4 +6,5 @@ app_name = 'main'
 urlpatterns = [
     url(r'^$', views.home, name='home'),
     url(r'^add_note/$', views.add_note, name='add_note'),
+    url(r'^note_list/$', views.note_list, name='note_list'),
 ]
