@@ -4,6 +4,7 @@
 
 {% block body %}
 <div class="col-sm-12">
+    <h1><a href="{% url 'main:edit_note' pk=certain_note.id %}">Edit</a></h1>
     <h1>Title: {{certain_note.title}}</h1>
     <h1>Category: {{certain_note.category}}</h1>
     <h1>Content: {{certain_note.content|linebreaks}}</h1>

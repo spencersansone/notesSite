@@ -37,4 +37,26 @@ def note_detail(request, pk):
     x = {}
     x['certain_note'] = Note.objects.get(id=pk)
     return render(request, 'main/note_detail.html', x)
+    
+def edit_note(request, pk):
+    certain_note = Note.objects.get(id=pk)
+    if request.method == "POST":
+        t = request.POST.get('title')
+        n_c = NoteCategory.objects.get(
+            title = request.POST.get('note_category'))
+        c = request.POST.get('content')
+        
+        certain_note.title = t
+        certain_note.category = n_c
+        certain_note.content = c
+        certain_note.save()
+        
+        x = {}
+        x['pk'] = pk
+        return HttpResponseRedirect(reverse('main:note_detail', kwargs=x))
+    else:
+        x = {}
+        x['certain_note'] = certain_note
+        x['note_categories'] = NoteCategory.objects.all().order_by('title')
+        return render(request, 'main/edit_note.html', x)
 # Create your views here.
