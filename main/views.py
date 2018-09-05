@@ -32,4 +32,9 @@ def note_list(request):
     x = {}
     x['note_list'] = Note.objects.all()
     return render(request, 'main/note_list.html', x)
+    
+def note_detail(request, pk):
+    x = {}
+    x['certain_note'] = Note.objects.get(id=pk)
+    return render(request, 'main/note_detail.html', x)
 # Create your views here.

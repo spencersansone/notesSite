@@ -1,0 +1,12 @@
+{% extends 'main/base.html' %}
+        
+{% block title %}Home{% endblock %}
+
+{% block body %}
+<div class="col-sm-12">
+    <h1>Title: {{certain_note.title}}</h1>
+    <h1>Category: {{certain_note.category}}</h1>
+    <h1>Content: {{certain_note.content|linebreaks}}</h1>
+    <h1>Date Created: {{certain_note.datetime_created}}</h1>
+</div>
+{% endblock %}

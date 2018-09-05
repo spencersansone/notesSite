@@ -16,7 +16,7 @@
         <tbody>
             {% for note in note_list %}
             <tr>
-                <td>{{note.title}}</td>
+                <td><a href="{% url 'main:note_detail' pk=note.id %}">{{note.title}}</a></td>
                 <td>{{note.category}}</td>
                 <td>{{note.datetime_created}}</td>
             </tr>
