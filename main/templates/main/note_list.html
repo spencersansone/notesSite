@@ -4,6 +4,14 @@
 
 {% block body %}
 <div class="col-sm-12">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'main:home' %}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Note List</li>
+        </ol>
+    </nav>    
+</div>
+<div class="col-sm-12">
 
     <table class="table">
         <thead>
