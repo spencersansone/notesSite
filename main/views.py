@@ -81,6 +81,7 @@ def edit_note(request, pk):
     else:
         x = {}
         x['certain_note'] = certain_note
+        x['certain_note_category'] = certain_note.category
         x['note_categories'] = NoteCategory.objects.all().order_by('title')
         return render(request, 'main/edit_note.html', x)
 # Create your views here.

@@ -51,7 +51,7 @@
             <select class="form-control" name="note_category" id="note_category">
               {% for note_category in note_categories %}
               <option {% if note_category.name == certain_note.category.name %}selected="selected"{% endif %}>
-                  {{note_category}}
+                  {{certain_note_category}}
               </option>
               {% endfor %}
             </select>
