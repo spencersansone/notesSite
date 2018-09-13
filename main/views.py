@@ -33,14 +33,9 @@ def add_note(request):
             category = n_c,
             content = c,
             datetime_created = today)
-        # return HttpResponseRedirect(reverse('main:home'))
         x = {}
         x['pk'] = new_note.pk
         return HttpResponseRedirect(reverse('main:note_detail', kwargs=x))
-        
-        
-        
-        
     x = {}
     x['note_categories'] = NoteCategory.objects.all().order_by('title') 
     return render(request, 'main/add_note.html', x)
@@ -57,7 +52,19 @@ def note_detail(request, pk):
     
 def edit_note(request, pk):
     certain_note = Note.objects.get(id=pk)
-    if request.method == "POST":
+    if request.is_ajax():
+        text = request.POST.get('text')
+        certain_note = Note.objects.get(id=pk)
+        
+        if certain_note.content == text:
+            # no need to save if content is still the same
+            return HttpResponse('identical')
+        
+        certain_note.content = text
+        certain_note.save()
+        
+        return HttpResponse('saved')
+    elif request.method == "POST":
         t = request.POST.get('title')
         n_c = NoteCategory.objects.get(
             title = request.POST.get('note_category'))
