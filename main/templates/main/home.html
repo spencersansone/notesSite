@@ -12,7 +12,43 @@
 </div>
 
 <div class="col-sm-12">
-    <a href="{% url 'main:add_note' %}"><h1>Add Note</h1></a>
-    <a href="{% url 'main:note_list' %}"><h1>Note List</h1></a>
+    <div class="accordion" id="accordion1">
+        {% for a in l %}
+        <div class="card bg-dark" style="color:black;">
+            <div class="card-header" id="heading{{forloop.counter}}">
+                <h5 class="mb-0">
+                    <button class="btn btn-primary btn-lg btn-block collapsed" type="button" data-toggle="collapse" data-target="#collapse{{forloop.counter}}" aria-expanded="false" aria-controls="collapse{{forloop.counter}}">
+                        <h4 style="color:white;">{{a.0.title}}</h4>
+                    </button>
+                </h5>
+            </div>
+            <div id="collapse{{forloop.counter}}" class="collapse" aria-labelledby="heading{{forloop.counter}}" data-parent="#accordion1">
+                <div class="card-body">
+                    <table class="table table-dark" style="border: 4px solid white;">
+                        <thead>
+                            <tr>
+                                <th scope="col">Title</th>
+                                <th scope="col">Date Created</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for b in a.1 %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'main:note_detail' pk=b.id %}" style="color:white;">
+                                        {{b.title}}
+                                    </a>
+                                </td>
+                                <td>{{b.datetime_created}}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <p>{{b.title}}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

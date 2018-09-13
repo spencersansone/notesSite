@@ -8,7 +8,18 @@ def getTodayDateTime():
     return datetime.now()
 
 def home(request):
-    return render(request, 'main/home.html')
+    all_notes = Note.objects.all()
+    all_note_categories = NoteCategory.objects.all()
+    l = []
+    
+    
+    for category in all_note_categories:
+        certain_notes = all_notes.filter(category = category)
+        l += [[category,certain_notes]]
+    
+    x = {}
+    x['l'] = l
+    return render(request, 'main/home.html', x)
 
 def add_note(request):
     if request.method == "POST":
