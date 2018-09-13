@@ -8,15 +8,14 @@ def getTodayDateTime():
     return datetime.now()
 
 def home(request):
-    all_notes = Note.objects.all()
-    all_note_categories = NoteCategory.objects.all()
+    all_notes = Note.objects.all().order_by('title')
+    all_note_categories = NoteCategory.objects.all().order_by('title')
     l = []
-    
     
     for category in all_note_categories:
         certain_notes = all_notes.filter(category = category)
         l += [[category,certain_notes]]
-    
+        
     x = {}
     x['l'] = l
     return render(request, 'main/home.html', x)
@@ -29,12 +28,19 @@ def add_note(request):
             title = request.POST.get('note_category'))
         c = request.POST.get('content')
         
-        Note.objects.create(
+        new_note = Note.objects.create(
             title = t,
             category = n_c,
             content = c,
             datetime_created = today)
-        return HttpResponseRedirect(reverse('main:home'))
+        # return HttpResponseRedirect(reverse('main:home'))
+        x = {}
+        x['pk'] = new_note.pk
+        return HttpResponseRedirect(reverse('main:note_detail', kwargs=x))
+        
+        
+        
+        
     x = {}
     x['note_categories'] = NoteCategory.objects.all().order_by('title') 
     return render(request, 'main/add_note.html', x)
