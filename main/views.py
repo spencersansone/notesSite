@@ -59,28 +59,16 @@ def edit_note(request, pk):
             title = request.POST.get('category'))
         content = request.POST.get('content')
         
-        
-        
         certain_note = Note.objects.get(id=pk)
         
         # if text, title, and cat are all the same then do nothing
         title_altered = certain_note.title != title
-        # print(title)
-        # print(certain_note.title)
-        # print(title_altered)
         category_altered = certain_note.category != category
-        # print(category)
-        # print(certain_note.category)
-        # print(category_altered)
         content_altered = certain_note.content != content
-        # print(content)
-        # print(certain_note.content)
-        # print(content_altered)
-        
+
         any_altered = (title_altered or category_altered or 
                         content_altered)
-        print(any_altered)
-                        
+        
         if not any_altered:
             return HttpResponse('identical')
         
@@ -88,6 +76,10 @@ def edit_note(request, pk):
         certain_note.title = title
         certain_note.category = category
         certain_note.save()
+        
+        if title_altered:
+            return HttpResponse('saved, new title')
+        
         return HttpResponse('saved')
     elif request.method == "POST":
         t = request.POST.get('title')

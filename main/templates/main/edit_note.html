@@ -25,6 +25,9 @@
                 success: function(response){
                     if(response == 'saved'){
                         alert('Note saved!');
+                    } else if (response == 'saved, new title'){
+                        $('#breadcrumb_title').text(title);
+                        alert('Note saved!');
                     } else {
                         alert('Note already up to date!');
                     }
@@ -38,7 +41,12 @@
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'main:home' %}">Home</a></li>
             <li class="breadcrumb-item"><a href="{% url 'main:note_list' %}">Note List</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'main:note_detail' pk=certain_note.id %}">{{certain_note.title}}</a></li>
+            <li class="breadcrumb-item">
+                <a id="breadcrumb_title" 
+                href="{% url 'main:note_detail' pk=certain_note.id %}">
+                    {{certain_note.title}}
+                </a>
+            </li>
             <li class="breadcrumb-item active" aria-current="page">Edit Note</li>
         </ol>
     </nav>    
