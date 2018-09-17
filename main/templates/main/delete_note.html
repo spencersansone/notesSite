@@ -1,0 +1,28 @@
+{% extends 'main/base.html' %}
+        
+{% block title %}Home{% endblock %}
+
+{% block body %}
+<div class="col-sm-12">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'main:home' %}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'main:note_list' %}">Note List</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'main:note_detail' pk=certain_note.id %}">{{certain_note.title}}</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Edit Note</li>
+        </ol>
+    </nav>    
+</div>
+<div class="col-sm-12">
+    <form role="form" id="form" action="{% url 'main:delete_note' pk=certain_note.id %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <h1>Are you sure you want to delete {{certain_note.title}}?</h1>
+        
+        <a class="btn btn-primary" href="{% url 'main:note_detail' pk=certain_note.id %}" role="button">No</a>
+        <button type="submit" class="btn btn-primary">Yes</button>
+        <!--<button type="submit" class="btn btn-danger">Discard Changes</button>-->
+    </form>
+</div>
+{% endblock %}

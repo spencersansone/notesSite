@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import *
 from datetime import datetime
 from django.http import HttpResponse, HttpResponseRedirect
@@ -101,4 +101,14 @@ def edit_note(request, pk):
         x['certain_note_category'] = certain_note.category
         x['note_categories'] = NoteCategory.objects.all().order_by('title')
         return render(request, 'main/edit_note.html', x)
+        
+def delete_note(request, pk):
+    certain_note = Note.objects.get(id=pk)
+    if request.method == 'POST':
+        certain_note.delete()
+        return redirect('main:home')
+    else:
+        x = {}
+        x['certain_note'] = certain_note
+        return render(request, 'main/delete_note.html', x)
 # Create your views here.
