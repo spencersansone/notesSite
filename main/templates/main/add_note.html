@@ -3,6 +3,20 @@
 {% block title %}Home{% endblock %}
 
 {% block body %}
+<script type="text/javascript">
+    $(function() {
+        csrf_token = $('input[name=csrfmiddlewaretoken]').val();
+        
+        $('textarea').each(function () {
+            this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');
+            }).on('input', function () {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+        
+    });
+</script>
+
 <div class="col-sm-12">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -33,7 +47,11 @@
         
         <div class="form-group">
             <label for="content">Content:</label>
-            <textarea class="form-control" name="content" rows="3" placeholder="Enter content"></textarea>
+            <textarea 
+                class="form-control"
+                id="content"
+                name="content"
+                placeholder="Enter content"></textarea>
         </div>
         
         <button type="submit" class="btn btn-primary">Submit</button>
