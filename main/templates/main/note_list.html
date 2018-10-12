@@ -2,7 +2,21 @@
 
 {% block title %}Note List | Notes{% endblock %}
 
+{% block header %}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script>
+{% endblock %}
+
 {% block body %}
+<script type="text/javascript">
+    $(function() {
+        $('#table').DataTable({
+            "paging": false,
+            "bInfo" : false
+        });
+        $('.dataTables_filter').css('float','left');
+    });
+</script>
 <div class="col-sm-12">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -13,7 +27,7 @@
 </div>
 <div class="col-sm-12">
 
-    <table class="table">
+    <table class="table table-dark" id="table">
         <thead>
             <tr>
                 <th scope="col">Title</th>
@@ -21,7 +35,7 @@
                 <th scope="col">Date Created</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody style="color:black;">
             {% for note in note_list %}
             <tr>
                 <td><a href="{% url 'main:note_detail' pk=note.id %}">{{note.title}}</a></td>
