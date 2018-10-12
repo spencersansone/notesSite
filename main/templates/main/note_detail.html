@@ -12,12 +12,49 @@
         </ol>
     </nav>    
 </div>
+
 <div class="col-sm-12">
-    <h1><a href="{% url 'main:edit_note' pk=certain_note.id %}">Edit</a></h1>
-    <h1><a style="color:red;" href="{% url 'main:delete_note' pk=certain_note.id %}">Delete</a></h1>
-    <h1>Title: {{certain_note.title}}</h1>
-    <h1>Category: {{certain_note.category}}</h1>
-    <h1>Content: {{certain_note.content|linebreaks}}</h1>
-    <h1>Date Created: {{certain_note.datetime_created}}</h1>
+    <div class="btn-group" style="width:100%;">
+        <a href="{% url 'main:edit_note' pk=certain_note.id %}" class="btn btn-info" style="width:50%;">Edit</a>
+        <a href="{% url 'main:delete_note' pk=certain_note.id %}" class="btn btn-danger" style="width:50%;">Delete</a>
+    </div>
+    
+    <div>
+        <br>
+    </div>
+    
+    <div class="card" style="color:black;">
+        <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label for="title">Title:</label>
+                    <input disabled type="text" class="form-control" style="background-color:#FFF;" name="title" id="title"  value="{{certain_note.title}}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="note_category">Category</label>
+                    <input disabled type="text" class="form-control" style="background-color:#FFF;" name="title" id="title"  value="{{certain_note.category}}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="content">Content:</label>
+                    <textarea
+                        disabled
+                        style="background-color:#FFF;"
+                        class="form-control"
+                        rows="15">{{certain_note.content}}</textarea>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div>
+        <br>
+    </div>
+    
+    <div class="btn-group" style="width:100%;">
+        <a href="{% url 'main:edit_note' pk=certain_note.id %}" class="btn btn-info" style="width:50%;">Edit</a>
+        <a href="{% url 'main:delete_note' pk=certain_note.id %}" class="btn btn-danger" style="width:50%;">Delete</a>
+    </div>
 </div>
 {% endblock %}

@@ -35,12 +35,37 @@
             });
         });
         
-        $('textarea').each(function () {
-            this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');
-            }).on('input', function () {
-            this.style.height = 'auto';
-            this.style.height = (this.scrollHeight) + 'px';
-        });
+        function scroll(){
+            window.scrollBy(0, 10000);
+        }
+        
+        // $('textarea').each(function () {
+        //     this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');
+        //     }).on('input', function () {
+        //     this.style.height = 'auto';
+        //     this.style.height = (this.scrollHeight) + 'px';
+        //     window.scrollBy(0, this.scrollHeight);
+        // });
+        
+        // function disableScroll() {
+        //   if (window.addEventListener) // older FF
+        //       window.addEventListener('DOMMouseScroll', preventDefault, false);
+        //   window.onwheel = preventDefault; // modern standard
+        //   window.onmousewheel = document.onmousewheel = preventDefault; // older browsers, IE
+        //   window.ontouchmove  = preventDefault; // mobile
+        //   document.onkeydown  = preventDefaultForScrollKeys;
+        // }
+        
+        // function enableScroll() {
+        //     if (window.removeEventListener)
+        //         window.removeEventListener('DOMMouseScroll', preventDefault, false);
+        //     window.onmousewheel = document.onmousewheel = null; 
+        //     window.onwheel = null; 
+        //     window.ontouchmove = null;  
+        //     document.onkeydown = null;  
+        // }
+        
+
         
         
     });
@@ -59,9 +84,22 @@
         </ol>
     </nav>    
 </div>
+
 <div class="col-sm-12">
     <form role="form" id="form" action="{% url 'main:edit_note' pk=certain_note.id %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
+        
+        <div class="form-group">
+            <div class="btn-group" style="width:100%;">
+                <button type="button" class="btn btn-success" id="save_button" style="width:50%;">Save</button>
+                <button type="submit" class="btn btn-primary" style="width:50%;">Save and Exit</button>
+            </div>
+        </div>
+        
+        <div>
+            <br>
+        </div>
+        
         <div class="form-group">
             <label for="title">Title:</label>
             <input type="text" class="form-control" name="title" id="title" placeholder="Enter title" value="{{certain_note.title}}">
@@ -70,26 +108,34 @@
         <div class="form-group">
             <label for="note_category">Category</label>
             <select class="form-control" name="note_category" id="note_category">
-              {% for note_category in note_categories %}
-              <option {% if note_category == certain_note_category %}selected="selected"{% endif %}>
-                  {{note_category}}
-              </option>
-              {% endfor %} 
+                {% for note_category in note_categories %}
+                <option {% if note_category == certain_note_category %}selected="selected"{% endif %}>
+                    {{note_category}}
+                </option>
+                {% endfor %} 
             </select>
         </div>
-        
+
         <div class="form-group">
             <label for="content">Content:</label>
             <textarea 
                 class="form-control"
                 id="content"
                 name="content"
+                rows="15"
                 placeholder="Enter content">{{certain_note.content}}</textarea>
         </div>
         
-        <button type="button" class="btn btn-success" id="save_button">Save</button>
-        <button type="submit" class="btn btn-primary">Save and Exit</button>
-        <!--<button type="submit" class="btn btn-danger">Discard Changes</button>-->
+        <div>
+            <br>
+        </div>
+        
+        <div class="form-group">
+            <div class="btn-group" style="width:100%;">
+                <button type="button" class="btn btn-success" id="save_button" style="width:50%;">Save</button>
+                <button type="submit" class="btn btn-primary" style="width:50%;">Save and Exit</button>
+            </div>
+        </div>
     </form>
 </div>
 {% endblock %}
