@@ -3,11 +3,70 @@ from .models import *
 from datetime import datetime
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
+from django.http import JsonResponse
 
 def getTodayDateTime():
     return datetime.now()
 
 def home(request):
+    x = {}
+    if request.is_ajax() and request.method == "GET":
+        if "get_info" in request.GET:
+            note_pk = request.GET.get('note_pk')
+            certain_note = Note.objects.get(id=note_pk)
+            
+            x['title'] = certain_note.title
+            x['content'] = certain_note.content
+            
+            return JsonResponse(x)
+        elif "is_same_check" in request.GET:
+            title = request.GET.get('current_title')
+            content = request.GET.get('current_content')
+            pk = request.GET.get('note_pk')
+            
+            certain_note = Note.objects.get(id=pk)
+            
+            # if text, title, and cat are all the same then do nothing
+            title_altered = certain_note.title != title
+            # category_altered = certain_note.category != category
+            content_altered = certain_note.content != content
+    
+            any_altered = (title_altered or content_altered)
+            
+            if not any_altered:
+                return HttpResponse('identical')
+            else:
+                return HttpResponse('different')
+    elif request.is_ajax() and  request.method == "POST":
+        if "save" in request.POST:
+            title = request.POST.get('title')
+            content = request.POST.get('content')
+            pk = request.POST.get('note_pk')
+            certain_note = Note.objects.get(id=pk)
+            
+            # if text, title, and cat are all the same then do nothing
+            title_altered = certain_note.title != title
+            # category_altered = certain_note.category != category
+            content_altered = certain_note.content != content
+    
+            any_altered = (title_altered or content_altered)
+            
+            if not any_altered:
+                return HttpResponse('identical')
+            
+            certain_note.content = content
+            certain_note.title = title
+            # certain_note.category = category
+            certain_note.save()
+            
+            if title_altered:
+                return HttpResponse('saved, new title')
+            
+            return HttpResponse('saved')
+            
+        else:
+            print(321)
+            
     all_notes = Note.objects.all().order_by('title')
     all_note_categories = NoteCategory.objects.all().order_by('title')
     l = []
@@ -15,8 +74,6 @@ def home(request):
     for category in all_note_categories:
         certain_notes = all_notes.filter(category = category)
         l += [[category,certain_notes]]
-        
-    x = {}
     x['l'] = l
     return render(request, 'main/home.html', x)
 

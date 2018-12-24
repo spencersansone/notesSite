@@ -3,6 +3,136 @@
 {% block title %}Home | Notes{% endblock %}
 
 {% block body %}
+<script src="https://rawgit.com/jackmoore/autosize/master/dist/autosize.min.js"></script>
+<script>
+var csrf_token = '{{csrf_token}}';
+var is_user_editing = false;
+var note_latest_content = "";
+var note_latest_title = "";
+
+$(document).ready(function(){
+    $('[data-toggle="popover"]').popover();
+    
+    $("body").on('click', '#edit_note_discard_cancel', function () {
+        $("#edit_note_discard").popover('hide');
+    });
+    
+    $("body").on('click', '#edit_note_discard_confirm', function () {
+        window.onbeforeunload = null;
+        $("#edit_note_discard").popover('hide');
+        $('#edit_note_modal').modal('hide');
+    });
+    
+    
+    $("body").on('keyup', '#edit_note_content,#edit_note_title', function () {
+        if($('#edit_note_content').val() == note_latest_content && $('#edit_note_title').val() == note_latest_title){
+            window.onbeforeunload = null;
+            $('#edit_note_close, #edit_note_close_x').show();
+            $('#edit_note_discard').hide();
+            $('#edit_note_save').hide();
+            
+        }else{
+            window.onbeforeunload = function(){
+                return 'If you close this page you will lose your changes!';
+            };
+            $('#edit_note_close, #edit_note_close_x').hide();
+            $('#edit_note_discard').show();
+            $('#edit_note_save').show();
+        }
+    });
+    
+    $("body").on('click', '#edit_note_close', function () {
+        window.onbeforeunload = null;
+    });
+
+    $("body").on('click', '.note', function () {
+        $('#edit_note_discard').hide();
+        var id = $(this).attr('id');
+        $.ajax({
+            type: 'GET',
+            dataType: 'json',
+            url: '/',
+            data: {
+                get_info: true,
+                note_pk: id,
+                csrfmiddlewaretoken : csrf_token
+            },
+            success: function(response){
+                var title = response.title;
+                var content = response.content;
+                note_latest_content = content;
+                note_latest_title = title;
+                $("#edit_note_body").html("");
+                $('input').prop('disabled', true);
+                $('#edit_note_modalLabel').html("Editing: " + title);
+                $('<form></form>')
+                .attr({role: 'form', id: 'edit_note_form',method: 'post',enctype: 'multipart/form-data'})
+                .appendTo("#edit_note_body");
+                
+                $('<label>Title:</label>')
+                .attr({for: "title"})
+                .appendTo("#edit_note_form");
+                
+                $('<input>')
+                .attr({type: "text", class: "form-control", name: "title", id: "edit_note_title", placeholder: "Enter title", value: title})
+                .appendTo("#edit_note_form");
+                
+                $('<label>Content</label>')
+                .attr({for: "content"})
+                .appendTo("#edit_note_form");
+                
+                $('<textarea>' + content + '</textarea>')
+                .attr({class: "form-control", id: "edit_note_content", name: "edit_note_content", rows: "7", placeholder: "Enter content"})
+                .appendTo("#edit_note_form");
+                
+                $('<input>')
+                .attr({type: "hidden", id: "edit_note_pk", value: id})
+                .appendTo("#edit_note_form");
+                
+                $('#edit_note_save').hide();
+                autosize($('#edit_note_content'));
+                $('#edit_note_modal').modal('show');
+                $('input').prop('disabled', false);
+            }
+        });
+    });
+    
+    $("body").on('click', '#edit_note_save', function () {
+        var title = $('#edit_note_title').val();
+        var content = $('#edit_note_content').val();
+        var note_pk = $('#edit_note_pk').val();
+        var url = $('#form').attr('action');
+        
+        $.ajax({
+            type: 'POST',
+            url: '/',
+            data: {
+                save: true,
+                note_pk: note_pk,
+                title: title,
+                content: content,
+                csrfmiddlewaretoken : csrf_token
+            },
+            success: function(response){
+                note_latest_content = content;
+                note_latest_title = title;
+                window.onbeforeunload = null;
+                $('#edit_note_close').show();
+                $('#edit_note_discard').hide();
+                $('#edit_note_save').hide();
+                if(response == 'saved'){
+                    alert('Note saved!');
+                } else if (response == 'saved, new title'){
+                    alert('Note saved!');
+                } else {
+                    alert('Note already up to date!');
+                }
+            }
+        });
+    });
+});
+</script>
+
 <div class="col-sm-12">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -24,7 +154,7 @@
             </div>
             <div id="collapse{{forloop.counter}}" class="collapse" aria-labelledby="heading{{forloop.counter}}" data-parent="#accordion1">
                 <div class="card-body">
-                    <table class="table table-dark" style="border: 4px solid white;">
+                    <table class="table table-responsive-sm table-dark" style="border: 4px solid white;">
                         <thead>
                             <tr>
                                 <th scope="col">Title</th>
@@ -34,11 +164,12 @@
                         <tbody>
                             {% for b in a.1 %}
                             <tr>
-                                <td>
-                                    <a href="{% url 'main:note_detail' pk=b.id %}" style="color:white;">
+                                
+                                <th scope="row">
+                                    <button type="button" id="{{b.id}}" class="btn btn-link note" style="color:white;">
                                         {{b.title}}
-                                    </a>
-                                </td>
+                                    </button>
+                                </th>
                                 <td>{{b.datetime_created}}</td>
                             </tr>
                             {% endfor %}
@@ -50,5 +181,36 @@
         </div>
         {% endfor %}
     </div>
+</div>
+
+<div class="modal fade" id="edit_note_modal" tabindex="-1" role="dialog" aria-labelledby="edit_note_modalLabel" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="edit_note_modalLabel" style="color:black;">Modal title</h5>
+        <button type="button" id="edit_note_close_x" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="edit_note_body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" id="edit_note_save">Save</button>
+        <button type="button" class="btn btn-secondary" id="edit_note_close" data-dismiss="modal">Close</button>
+        <button 
+            type="button"
+            id="edit_note_discard"
+            class="btn btn-danger" 
+            data-toggle="popover"
+            data-placement="top"
+            title="<p style='color:black;'>Are you sure you want to discard changes?</p>" 
+            data-html="true"
+            data-content="
+            <div class='btn-group-vertical' style='width:100%;'>
+                <button type='button' id='edit_note_discard_confirm' class='btn btn-danger'>Yes</button>
+                <button type='button' id='edit_note_discard_cancel' class='btn btn-secondary'>Cancel</button>
+            </div>">Discard</button>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
