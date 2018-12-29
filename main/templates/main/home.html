@@ -19,6 +19,7 @@ $(document).ready(function(){
     
     $("body").on('click', '#edit_note_discard_confirm', function () {
         window.onbeforeunload = null;
+        $('#edit_note_close, #edit_note_close_x').show();
         $("#edit_note_discard").popover('hide');
         $('#edit_note_modal').modal('hide');
     });
@@ -62,12 +63,24 @@ $(document).ready(function(){
                 var content = response.content;
                 note_latest_content = content;
                 note_latest_title = title;
+                
                 $("#edit_note_body").html("");
+                
                 $('input').prop('disabled', true);
+                
                 $('#edit_note_modalLabel').html("Editing: " + title);
+                
                 $('<form></form>')
                 .attr({role: 'form', id: 'edit_note_form',method: 'post',enctype: 'multipart/form-data'})
                 .appendTo("#edit_note_body");
+                
+                $('<div></div>')
+                .attr({id: "edit_note_save_message", class: "alert alert-success", role: "alert"})
+                .appendTo("#edit_note_form").hide();
+                
+                $('<div></div>')
+                .attr({id: "edit_note_saving_message", class: "alert alert-warning", role: "alert"})
+                .appendTo("#edit_note_form").hide();
                 
                 $('<label>Title:</label>')
                 .attr({for: "title"})
@@ -82,17 +95,20 @@ $(document).ready(function(){
                 .appendTo("#edit_note_form");
                 
                 $('<textarea>' + content + '</textarea>')
-                .attr({class: "form-control", id: "edit_note_content", name: "edit_note_content", rows: "7", placeholder: "Enter content"})
-                .appendTo("#edit_note_form");
+                .attr({class: "form-control", id: "edit_note_content", name: "edit_note_content", rows: 10, placeholder: "Enter content"})
+                .appendTo("#edit_note_form")
                 
                 $('<input>')
                 .attr({type: "hidden", id: "edit_note_pk", value: id})
                 .appendTo("#edit_note_form");
                 
                 $('#edit_note_save').hide();
-                autosize($('#edit_note_content'));
                 $('#edit_note_modal').modal('show');
+                autosize($('#edit_note_content'));
+                // $('#edit_note_content').append("resized!");
                 $('input').prop('disabled', false);
+                
+                // $('#edit_note_content').trigger('autosize.update');
             }
         });
     });
@@ -102,7 +118,7 @@ $(document).ready(function(){
         var content = $('#edit_note_content').val();
         var note_pk = $('#edit_note_pk').val();
         var url = $('#form').attr('action');
-        
+        $('#edit_note_saving_message').html('Attempting to save...').fadeIn(1);
         $.ajax({
             type: 'POST',
             url: '/',
@@ -114,19 +130,21 @@ $(document).ready(function(){
                 csrfmiddlewaretoken : csrf_token
             },
             success: function(response){
+                $('#edit_note_saving_message').fadeOut(1);
                 note_latest_content = content;
                 note_latest_title = title;
+                $('#' + note_pk).text(note_latest_title);
+                $('#edit_note_modalLabel').html('Editing: ' + note_latest_title);
                 window.onbeforeunload = null;
-                $('#edit_note_close').show();
-                $('#edit_note_discard').hide();
-                $('#edit_note_save').hide();
-                if(response == 'saved'){
-                    alert('Note saved!');
-                } else if (response == 'saved, new title'){
-                    alert('Note saved!');
+                $('#edit_note_close, #edit_note_close_x').show();
+                $('#edit_note_discard, #edit_note_save').hide();
+                if(response == 'saved' || response == 'saved, new title'){
+                    $('#edit_note_save_message').html('Note Saved!');
                 } else {
-                    alert('Note already up to date!');
+                    $('#edit_note_save_message').html('Note already up to date!');
                 }
+                $('#edit_note_save_message').fadeIn(1000);
+                window.setTimeout(function (){$('#edit_note_save_message').fadeOut(1000);}, 5000);
             }
         });
     });
