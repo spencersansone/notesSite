@@ -4,10 +4,16 @@ from datetime import datetime
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.http import JsonResponse
+from django.contrib.auth.decorators import user_passes_test
+
+def check_if_authorized(user):
+    if user.username != "admin":
+        return False
+    return True
 
 def getTodayDateTime():
     return datetime.now()
-
+    
 def home(request):
     x = {}
     if request.is_ajax() and request.method == "GET":
@@ -76,7 +82,7 @@ def home(request):
         l += [[category,certain_notes]]
     x['l'] = l
     return render(request, 'main/home.html', x)
-
+    
 def add_note(request):
     if request.method == "POST":
         today = getTodayDateTime()
@@ -96,7 +102,7 @@ def add_note(request):
     x = {}
     x['note_categories'] = NoteCategory.objects.all().order_by('title') 
     return render(request, 'main/add_note.html', x)
-
+    
 def note_list(request):
     x = {}
     x['note_list'] = Note.objects.all()
@@ -133,10 +139,8 @@ def edit_note(request, pk):
         certain_note.title = title
         certain_note.category = category
         certain_note.save()
-        
         if title_altered:
             return HttpResponse('saved, new title')
-        
         return HttpResponse('saved')
     elif request.method == "POST":
         t = request.POST.get('title')
@@ -168,4 +172,5 @@ def delete_note(request, pk):
         x = {}
         x['certain_note'] = certain_note
         return render(request, 'main/delete_note.html', x)
+
 # Create your views here.

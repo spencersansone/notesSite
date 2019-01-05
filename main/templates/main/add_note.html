@@ -1,11 +1,11 @@
 {% extends 'main/base.html' %}
         
-{% block title %}Add Note | Notes{% endblock %}
+{% block title %}Add Note | notesSite{% endblock %}
 
 {% block body %}
 <script type="text/javascript">
     $(function() {
-        csrf_token = $('input[name=csrfmiddlewaretoken]').val();
+        // csrf_token= $('input[name=csrfmiddlewaretoken]').val();
         
         $('textarea').each(function () {
             this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');
@@ -28,7 +28,7 @@
 </div>
 <div class="col-sm-12">
     <form role="form" action="{% url 'main:add_note' %}" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
+        {% csrf_token  %}
         <div class="form-group">
             <label for="title">Title:</label>
             <input type="text" class="form-control" name="title" placeholder="Enter title">

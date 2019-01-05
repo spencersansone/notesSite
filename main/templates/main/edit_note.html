@@ -5,7 +5,7 @@
 {% block body %}
 <script type="text/javascript">
     $(function() {
-        csrf_token = $('input[name=csrfmiddlewaretoken]').val();
+         = $('input[name=csrfmiddlewaretoken]').val();
         
         $("body").on('click', '#save_button', function () {
             var title = $('#title').val();
@@ -20,7 +20,7 @@
                   title: title,
                   category: category,
                   content: content,
-                  csrfmiddlewaretoken : csrf_token
+                  csrfmiddlewaretoken : 
                 },
                 success: function(response){
                     if(response == 'saved'){
@@ -87,7 +87,7 @@
 
 <div class="col-sm-12">
     <form role="form" id="form" action="{% url 'main:edit_note' pk=certain_note.id %}" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
+        {%  %}
         
         <div class="form-group">
             <div class="btn-group" style="width:100%;">
