@@ -79,6 +79,18 @@ def home(request):
                 return HttpResponse('pass', status=200)
             else:
                 return HttpResponse('fail', status=409)
+        if "delete_note" in request.POST:
+            response = ""
+            pk = request.POST.get('note_pk')
+            title_attempt = request.POST.get('title_attempt')
+            
+            certain_note = Note.objects.get(id=pk)
+            
+            if title_attempt == certain_note.title:
+                certain_note.delete()
+                return HttpResponse('pass', status=200)
+            else:
+                return HttpResponse('fail', status=409)
             
         else:
             print(321)
