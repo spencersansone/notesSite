@@ -141,6 +141,19 @@ $(document).ready(function(){
                 csrfmiddlewaretoken : csrf_token
             },
             success: function(response){
+                $.ajax({
+                    type: 'GET',
+                    url: '/',
+                    data: {
+                        get_datetime_edited: true,
+                        note_pk: note_pk,
+                        csrfmiddlewaretoken : csrf_token
+                    },
+                    success: function(response){
+                        // console.log(response)
+                        $("#edited_" + note_pk).text(response);
+                    }
+                });
                 $('#edit_note_saving_message').fadeOut(1);
                 note_latest_content = content;
                 note_latest_title = title;
@@ -331,18 +344,19 @@ function deleteNoteSubmit(e) {
                         <thead>
                             <tr>
                                 <th scope="col">Title</th>
+                                <th scope="col">Date Edited</th>
                                 <th scope="col">Date Created</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for b in a.1 %}
                             <tr>
-                                
                                 <th scope="row">
                                     <button type="button" id="{{b.id}}" class="btn btn-link note" style="color:white;">
                                         {{b.title}}
                                     </button>
                                 </th>
+                                <td id="edited_{{b.id}}">{{b.datetime_edited}}</td>
                                 <td>{{b.datetime_created}}</td>
                             </tr>
                             {% endfor %}

@@ -43,6 +43,20 @@ def home(request):
                 return HttpResponse('identical')
             else:
                 return HttpResponse('different')
+        elif "get_datetime_edited" in request.GET:
+            pass
+            pk = request.GET.get('note_pk')
+            certain_note = Note.objects.get(id=pk)
+            if certain_note.datetime_edited.strftime('%p') == "AM":
+                meridiem = "a.m."
+            else:
+                meridiem = "p.m."
+                
+            response = certain_note.datetime_edited.strftime("%b. %-d, %Y, %-I:%M " + meridiem)
+            return HttpResponse(response)
+            # Jan. 6, 2019, 12:33 a.m.
+            # %b %-d, %Y, %-I:%-M %p
+            
     elif request.is_ajax() and  request.method == "POST":
         if "save" in request.POST:
             title = request.POST.get('title')
@@ -62,6 +76,7 @@ def home(request):
             
             certain_note.content = content
             certain_note.title = title
+            certain_note.datetime_edited = getTodayDateTime()
             # certain_note.category = category
             certain_note.save()
             
@@ -91,9 +106,6 @@ def home(request):
                 return HttpResponse('pass', status=200)
             else:
                 return HttpResponse('fail', status=409)
-            
-        else:
-            print(321)
             
     all_notes = Note.objects.all().order_by('title')
     all_note_categories = NoteCategory.objects.all().order_by('title')
