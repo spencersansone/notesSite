@@ -84,6 +84,24 @@ def home(request):
                 return HttpResponse('saved, new title')
             
             return HttpResponse('saved')
+        elif "add_note" in request.POST:
+            response = ""
+            title = request.POST.get('title')
+            cat = request.POST.get('cat')
+            fresh_note_category = NoteCategory.objects.get(title=cat)
+            certain_note = Note.objects.filter(
+                title = title,
+                category = fresh_note_category)
+                
+            if len(certain_note) == 0:
+                Note.objects.create(
+                    title=title,
+                    category = fresh_note_category,
+                    content = "",
+                    datetime_created = getTodayDateTime())
+                return HttpResponse('pass', status=200)
+            else:
+                return HttpResponse('fail', status=409)
         elif "add_cat" in request.POST:
             response = ""
             title = request.POST.get('title')
@@ -127,6 +145,7 @@ def home(request):
         certain_notes = all_notes.filter(category = category)
         l += [[category,certain_notes]]
     x['l'] = l
+    x['note_categories'] = NoteCategory.objects.all().order_by('title')
     return render(request, 'main/home.html', x)
     
 def add_note(request):
