@@ -69,17 +69,6 @@ def home(request):
                 return HttpResponse('saved, new title')
             
             return HttpResponse('saved')
-        if "add_cat" in request.POST:
-            response = ""
-            title = request.POST.get('title')
-            certain_note_category = NoteCategory.objects.filter(title=title)
-            if len(certain_note_category) == 0:
-                NoteCategory.objects.create(
-                    title=title)
-                return HttpResponse('pass', status=200)
-            else:
-                return HttpResponse('fail', status=409)
-            
         else:
             print(321)
             

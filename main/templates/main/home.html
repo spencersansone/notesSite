@@ -11,7 +11,18 @@ var note_latest_content = "";
 var note_latest_title = "";
 
 $(document).ready(function(){
+    $(document).click(function(e) {
+      if (!$(e.target).is('button,.form-group,a,input,label,.popover-body,form,.arrow')) {
+      $('.collapse').collapse('hide');
+      $('#login_button').popover('hide');
+      }
+    });
+    
     $('[data-toggle="popover"]').popover();
+    
+    $("body").on('click', '#close', function () {
+      $('[data-toggle="popover"]').popover('hide');
+    });
     
     $("body").on('click', '#edit_note_discard_cancel', function () {
         $("#edit_note_discard").popover('hide');
@@ -149,7 +160,36 @@ $(document).ready(function(){
         });
     });
 });
+function addCatSubmit(e) {
+    $('#add_cat_message').html("<div class='alert alert-info' role='alert'>Attempting...</div>");
+    t = $('#add_cat_title').val();
+    // p = $('#login_password').val();
+    
+    $.ajax({
+      type: 'POST',
+      url: '/',
+      data: {
+        add_cat: true,
+        title: t,
+        csrfmiddlewaretoken : csrf_token
+      },
+      success: function(response){
+        location.reload() 
+      },
+      error: function(jqXHR){
+        status_code = jqXHR.status;
+        if(status_code == 409){
+          $('#add_cat_message').html("<div class='alert alert-danger' role='alert'>That title already exists. Please try another.</div>");
+        }
+        console.log(jqXHR.status)
+      }
+    });
+    e.preventDefault();
+    return false;
+}
 </script>
+
+
 
 <div class="col-sm-12">
     <nav aria-label="breadcrumb">
@@ -161,6 +201,44 @@ $(document).ready(function(){
 
 <div class="col-sm-12">
     <!--<button type="button" class="btn btn-success btn-lg btn-block">Add Category</button>-->
+    
+    <!--<button -->
+    <!--  type="button"-->
+    <!--  id="add_note_button"-->
+    <!--  class="btn btn-block btn-success" -->
+    <!--  data-toggle="popover"-->
+    <!--  data-placement="bottom"-->
+    <!--  data-html="true"-->
+    <!--  data-content="-->
+    <!--    <form role='form' id='add_note_form' method='post' enctype='multipart/form-data' onsubmit='return addNoteSubmit(event)'>-->
+    <!--      <div id='add_note_message'>-->
+    <!--      </div>-->
+    <!--      <div class='form-group'>-->
+    <!--        <label for='title'>New Note Title:</label>-->
+    <!--        <input required type='text' class='form-control' id='add_cat_title' placeholder='Title'>-->
+    <!--      </div>-->
+    <!--      <button type='submit' class='btn btn-success' id='add_cat_submit_button'>Submit</button>-->
+    <!--      <button type='button' id='close' class='btn btn-danger'>Close</button>-->
+    <!--    </form>">Add New Category</button>-->
+    
+    <button 
+      type="button"
+      id="add_cat_button"
+      class="btn btn-block btn-success" 
+      data-toggle="popover"
+      data-placement="bottom"
+      data-html="true"
+      data-content="
+        <form role='form' id='add_cat_form' method='post' enctype='multipart/form-data' onsubmit='return addCatSubmit(event)'>
+          <div id='add_cat_message'>
+          </div>
+          <div class='form-group'>
+            <label for='title'>New Category Title:</label>
+            <input required type='text' class='form-control' id='add_cat_title' placeholder='Title'>
+          </div>
+          <button type='submit' class='btn btn-success' id='add_cat_submit_button'>Submit</button>
+          <button type='button' id='close' class='btn btn-danger'>Close</button>
+        </form>">Add New Category</button>
 
     <!--<button -->
     <!--  type="button"-->
