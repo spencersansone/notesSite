@@ -84,7 +84,7 @@ def home(request):
                 return HttpResponse('saved, new title')
             
             return HttpResponse('saved')
-        if "add_cat" in request.POST:
+        elif "add_cat" in request.POST:
             response = ""
             title = request.POST.get('title')
             certain_note_category = NoteCategory.objects.filter(title=title)
@@ -94,7 +94,7 @@ def home(request):
                 return HttpResponse('pass', status=200)
             else:
                 return HttpResponse('fail', status=409)
-        if "delete_note" in request.POST:
+        elif "delete_note" in request.POST:
             response = ""
             pk = request.POST.get('note_pk')
             title_attempt = request.POST.get('title_attempt')
@@ -103,6 +103,18 @@ def home(request):
             
             if title_attempt == certain_note.title:
                 certain_note.delete()
+                return HttpResponse('pass', status=200)
+            else:
+                return HttpResponse('fail', status=409)
+        elif "del_cat" in request.POST:
+            response = ""
+            pk = request.POST.get('note_pk')
+            title_attempt = request.POST.get('title_attempt')
+            
+            certain_note_category = NoteCategory.objects.get(id=pk)
+            
+            if title_attempt == certain_note_category.title:
+                certain_note_category.delete()
                 return HttpResponse('pass', status=200)
             else:
                 return HttpResponse('fail', status=409)
